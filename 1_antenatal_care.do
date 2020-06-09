@@ -96,8 +96,8 @@ order *,sequential
 	replace c_anc_ir_q = . if c_anc_any == 1 & mi(c_anc_ir)
 	
 	*c_anc_tet: pregnant women vaccinated against tetanus for last birth in last 2 years
-	    
-	    gen tet2lastp = 0                                                                                   //follow the definition by report. might be country specific. 
+	gen c_anc_tet = .   //no pregnant women tetanus injection information.  
+/* 	    gen tet2lastp = 0                                                                                   //follow the definition by report. might be country specific. 
         replace tet2lastp = 1 if m1 >1 & m1<8
 	
 	    * temporary vars needed to compute the indicator
@@ -122,25 +122,29 @@ order *,sequential
 	    gen rh_anc_neotet = ttprotect
 	    label var rh_anc_neotet "Protected against neonatal tetanus"
 		
-	gen c_anc_tet = (rh_anc_neotet == 1) if  !mi(rh_anc_neotet)
+	gen c_anc_tet = (rh_anc_neotet == 1) if  !mi(rh_anc_neotet) */
 	
 	*c_anc_tet_q: pregnant women vaccinated against tetanus among ANC users for last birth in last 2 years
-	gen c_anc_tet_q = (rh_anc_neotet == 1) if c_anc_any == 1
-	replace c_anc_tet_q = . if c_anc_any == 1 & mi(rh_anc_neotet)
+    gen c_anc_tet_q = .
+/* 	gen c_anc_tet_q = (rh_anc_neotet == 1) if c_anc_any == 1
+	replace c_anc_tet_q = . if c_anc_any == 1 & mi(rh_anc_neotet) */
 	
 	*c_anc_eff2: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination) of births in last 2 years
-	gen c_anc_eff2 = (c_anc == 1 & anc_skill>0 & anc_blood == 3 & rh_anc_neotet == 1) 
+    gen c_anc_eff2 = .
+/* 	gen c_anc_eff2 = (c_anc == 1 & anc_skill>0 & anc_blood == 3 & rh_anc_neotet == 1) 
 	replace c_anc_eff2 = . if c_anc == . | anc_skill == . |  rh_anc_neotet == . | anc_blood == .
-	
+	 */
 	*c_anc_eff2_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination) among ANC users of births in last 2 years
 	gen c_anc_eff2_q = c_anc_eff2 if c_anc_any == 1
 	 
 	*c_anc_eff3: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) of births in last 2 years 
-	gen c_anc_eff3 = (c_anc == 1 & anc_skill>0 & anc_blood == 3 & rh_anc_neotet == 1 & inrange(m13,0,3)) 
+    gen c_anc_eff3 = . 
+/* 	gen c_anc_eff3 = (c_anc == 1 & anc_skill>0 & anc_blood == 3 & rh_anc_neotet == 1 & inrange(m13,0,3)) 
 	replace c_anc_eff3 = . if c_anc == . | anc_skill == . | rh_anc_neotet == . | m13 == 98 | anc_blood == .
-	 
+	  */
 	*c_anc_eff3_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) among ANC users of births in last 2 years
-    gen c_anc_eff3_q = c_anc_eff3 if c_anc_any == 1
+    gen c_anc_eff3_q = .
+/*  gen c_anc_eff3_q = c_anc_eff3 if c_anc_any == 1 */
 	
 	*w_sampleweight.
 	gen w_sampleweight = v005/10e6

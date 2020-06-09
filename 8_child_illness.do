@@ -68,15 +68,15 @@ order *,sequential  //make sure variables are in order.
         gen c_diarrhea_mof = (h38 == 5) if !inlist(h38,.,8) & c_diarrhea == 1
 
 *c_diarrhea_medfor Get formal medicine except (ors hmf home other_med, country specific). 
-        egen medfor = rowtotal(h12z h15 h15a h15b h15c h15e h15g h15h h15i),mi
+        egen medfor = rowtotal(h12z h15 h15a h15b h15c h15e h15g h15h ),mi
 		gen c_diarrhea_medfor = ( medfor > = 1 ) if c_diarrhea == 1
 		// formal medicine don't include "home remedy, herbal medicine and other"
-        replace c_diarrhea_medfor = . if (h12z == 8 | h15 == 8 | h15a == 8 | h15b == 8 | h15c == 8 | h15e == 8  | h15g == 8 | h15h == 8 | h15i == 8 )                                       
+        replace c_diarrhea_medfor = . if (h12z == 8 | h15 == 8 | h15a == 8 | h15b == 8 | h15c == 8 | h15e == 8  | h15g == 8 | h15h == 8  )                                       
 
 *c_diarrhea_med	Child with diarrhea received any medicine other than ORS or hmf (country specific)
-        egen med = rowtotal(h12z h15 h15a h15b h15c h15d h15e h15f h15g h15h h15i),mi
+        egen med = rowtotal(h12z h15 h15a h15b h15c h15d h15e h15f h15g h15h),mi
         gen c_diarrhea_med = ( med > = 1 ) if c_diarrhea == 1
-        replace c_diarrhea_med = . if (h12z == 8 | h15 == 8 | h15a == 8 | h15b == 8 | h15c == 8 | h15d == 8 | h15e == 8 | h15f == 8 | h15g == 8 | h15h == 8 | h15i == 8 )
+        replace c_diarrhea_med = . if (h12z == 8 | h15 == 8 | h15a == 8 | h15b == 8 | h15c == 8 | h15d == 8 | h15e == 8 | h15f == 8 | h15g == 8 | h15h == 8 )
 		
 *c_diarrheaact	Child with diarrhea seen by provider OR given any form of formal treatment
         gen c_diarrheaact = (c_diarrhea_pro==1 | c_diarrhea_medfor==1 | c_diarrhea_hmf==1 | c_treatdiarrhea==1) if c_diarrhea == 1
@@ -106,10 +106,14 @@ order *,sequential  //make sure variables are in order.
 		
 *c_ari	Child with acute respiratory infection (ARI)	
         gen c_ari = . 
+		cap confirm variable h31c 
+		if _rc== 0 {
 		replace c_ari= 1 if inlist(h31c,1,3) & ccough== 1 & h31b == 1	
 		replace c_ari= 0 if h31b==0 | ccough==0 	
+		}
 		/* Children under 5 with cough and rapid breathing in the 
 		two weeks preceding the survey which originated from the chest. */
+		
 		
 		gen c_ari2 = . 
 		replace c_ari2 = 1 if h31b == 1

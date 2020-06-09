@@ -36,16 +36,17 @@ global DO "C:\Users\wb500886\OneDrive - WBG\10_Health\UHC\GitHub\DHS-Recode-IV"
 do "${DO}/0_GLOBAL.do"
 
 
+
 foreach name in $DHScountries_Recode_IV{	
 
-tempfile birth ind men hm hiv hh zsc zsc_hm zsc_birth iso 
+tempfile birth ind men hm hiv hh zsc iso 
 
 ************************************
 ***domains using zsc data***********
 ************************************
-capture confirm file "${SOURCE}/DHS/DHS-`name'/DHS-`name'zsc.dta"	
+capture confirm file "${SOURCE}/DHS-`name'/DHS-`name'zsc.DTA"	
 if _rc == 0 {
-    use "${SOURCE}/DHS/DHS-`name'/DHS-`name'zsc.dta", clear
+    use "${SOURCE}/DHS-`name'/DHS-`name'zsc.dta", clear
     if hwlevel == 2 {
 		gen caseid = hwcaseid
 		gen bidx = hwline   	  
@@ -70,7 +71,7 @@ if _rc == 0 {
     }
 
  	if hwlevel == 1 {
- 		use "${SOURCE}/DHS/DHS-`name'/DHS-`name'zsc.dta", clear
+ 		use "${SOURCE}/DHS-`name'/DHS-`name'zsc.dta", clear
  		gen hhid = hwhhid
  		gen hvidx = hwline
  		merge 1:1 hhid hvidx using "${SOURCE}/DHS-`name'/DHS-`name'hm.dta", keepusing(hv103 hv001 hv002 hv005)
@@ -91,12 +92,12 @@ if _rc == 0 {
  		replace c_underweight=0 if hc71>=-2 & hc71!=.
 	    
 		rename ant_sampleweight c_ant_sampleweight
-		keep c_* hhid hvidx
+		keep c_* hhid hvidx hc70 hc71
 		save "${INTER}/zsc_hm.dta",replace
     }
 
  }
- 
+
 ******************************
 *****domains using birth data*
 ******************************
@@ -180,16 +181,15 @@ capture confirm file "${INTER}/zsc_hm.dta"
 	
 	if _rc == 0 {
 	merge 1:1 hhid hvidx using "${INTER}/zsc_hm.dta"
-
 	}
 	
 keep hv001 hv002 hvidx hc70 hc71 ///
 c_* a_* hm_* ln 
 save `hm'
 
-capture confirm file "${SOURCE}/DHS/DHS-`name'/DHS-`name'hiv.dta"
+capture confirm file "${SOURCE}/DHS-`name'/DHS-`name'hiv.dta"
  	if _rc==0 {
-    use "${SOURCE}/DHS/DHS-`name'/DHS-`name'hiv.dta", clear
+    use "${SOURCE}/DHS-`name'/DHS-`name'hiv.dta", clear
     do "${DO}/12_hiv"
  	}
  	if _rc!= 0 {
@@ -203,7 +203,7 @@ use `hm',clear
 merge 1:1 hv001 hv002 hvidx using `hiv'
 drop _merge
 save `hm',replace
-
+ 
 ************************************
 *****domains using hh level data****
 ************************************
@@ -313,7 +313,7 @@ preserve
     do "${DO}/Label_var" 
 	
 *** Clean the intermediate data
-    capture confirm file "${INTER}/zsc_hm.dta"
+    capture confirm file "${INTER}/zsc_birth.dta"
     if _rc == 0 {
     erase "${INTER}/zsc_birth.dta"
     }	
@@ -324,9 +324,5 @@ preserve
     }	
 
 	
-save "${OUT}/DHS-`name'.dta", replace  
+save "${OUT}/DHS-`name'.dta", replace   
 }
-
-
-
-

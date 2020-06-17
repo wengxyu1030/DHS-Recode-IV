@@ -50,7 +50,7 @@ if _rc == 0 {
     if hwlevel == 2 {
 		gen caseid = hwcaseid
 		gen bidx = hwline   	  
-		merge 1:1 caseid bidx using `birth'
+		merge 1:1 caseid bidx using "${SOURCE}/DHS-`name'/DHS-`name'birth.dta"
     	gen ant_sampleweight = v005/10e6  
     	drop if _!=3
 		
@@ -66,7 +66,7 @@ if _rc == 0 {
  		replace c_underweight=0 if hc71>=-2 & hc71!=.
 		
 		rename ant_sampleweight c_ant_sampleweight
-		keep c_* caseid bidx
+		keep c_* caseid bidx hwlevel
 		save "${INTER}/zsc_birth.dta",replace
     }
 

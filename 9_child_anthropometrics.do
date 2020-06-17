@@ -17,6 +17,7 @@
  replace `var'=. if `var'>900
  replace `var'=`var'/100
  }
+ 
  replace hc70=. if hc70<-6 | hc70>6
  replace hc71=. if hc71<-6 | hc71>5
  gen c_stunted=1 if hc70<-2

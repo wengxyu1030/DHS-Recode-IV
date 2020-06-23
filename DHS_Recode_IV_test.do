@@ -65,7 +65,7 @@ if _rc == 0 {
  		replace c_underweight=0 if hc71>=-2 & hc71!=.
 		
 		rename ant_sampleweight c_ant_sampleweight
-		keep c_* caseid bidx hwlevel
+		keep c_* caseid bidx hwlevel hc70 hc71
 		save "${INTER}/zsc_birth.dta",replace
     }
 
@@ -114,7 +114,8 @@ use "${SOURCE}/DHS-`name'/DHS-`name'birth.dta", clear
 	
 	capture confirm file "${INTER}/zsc_birth.dta"
 	if _rc == 0 {
-	merge 1:1 caseid bidx using "${INTER}/zsc_birth.dta"
+	merge 1:1 caseid bidx using "${INTER}/zsc_birth.dta",nogen
+	rename (hc70 hc71) (c_hc70 c_hc71)
     }
 	
 *housekeeping for birthdata
@@ -172,17 +173,24 @@ gen name = "`name'"
     do "${DO}/14_demographics"
 	
 capture confirm file "${INTER}/zsc_hm.dta"
-    if _rc != 0 {
-    do "${DO}/9_child_anthropometrics" 
-	rename ant_sampleweight c_ant_sampleweight
-    }	
 	
 	if _rc == 0 {
-	merge 1:1 hhid hvidx using "${INTER}/zsc_hm.dta"
+	merge 1:1 hhid hvidx using "${INTER}/zsc_hm.dta",nogen
+	rename (hc70 hc71) (hm_hc70 hm_hc71)
 	}
 	
-keep hv001 hv002 hvidx hc70 hc71 ///
-c_* a_* hm_* ln 
+    if _rc != 0 {
+	  capture confirm file "${INTER}/zsc_birth.dta"
+	    if _rc != 0 {
+          do "${DO}/9_child_anthropometrics"  //if there's no zsc related file, then run 9_child_anthropometrics
+	      rename ant_sampleweight c_ant_sampleweight
+		}
+    }	
+	
+gen c_placeholder = 1
+keep hv001 hv002 hvidx  ///
+a_* hm_* ln c_*
+
 save `hm'
 
 capture confirm file "${SOURCE}/DHS-`name'/DHS-`name'hiv.dta"
@@ -214,8 +222,8 @@ use "${SOURCE}/DHS-`name'/DHS-`name'hm.dta", clear
 
     do "${DO}/15_household"
 
-keep hv001 hv002 hv003 hh_* 
-save `hh' 
+keep hhid hv001 hv002 hv003 hh_* 
+save `hh',replace 
 
 
 ************************************
@@ -228,7 +236,20 @@ keep country iso2c iso3c
 save `iso'
 
 ***merge all subset of microdata
-use `hm',clear
+use `birth',clear 
+mdesc hvidx //identify the case where there is no child line info in hm.dta 
+gen miss_b16 = 1 if r(percent) == 1 
+
+if miss_b16 == 1 {
+   //when b16 is missing, the hm.dta can not be merged with birth.dta, the final microdata would be women and child only.
+  
+    merge m:1 hv001 hv002 hvidx using `ind',nogen update //merge child in birth.dta to mother in ind.dta
+    merge m:m hv001 hv002       using `hh',nogen update 
+}
+
+if miss_b16 != 1 {
+
+  use `hm',clear //when b16 is not missing, the hm.dta can be merged with birth.dta, the final microdata has all household member info
 
     merge 1:m hv001 hv002 hvidx using `birth',update              //missing update is zero, non missing conflict for all matched.(hvidx different) 
     replace hm_headrel = 99 if _merge == 2
@@ -239,8 +260,22 @@ use `hm',clear
     merge m:m hv001 hv002 hvidx using `ind',nogen update
 	merge m:m hv001 hv002       using `hh',nogen update
     
-	rename c_ant_sampleweight ant_sampleweight
     tab hh_urban,mi  //check whether all hh member + dead child + child lives outside hh assinged hh info
+}
+
+
+capture confirm variable c_hc70 c_hc71 
+if _rc == 0 {
+rename (c_hc70 c_hc71 ) (hc70 hc71 )
+}
+
+capture confirm variable hm_hc70 hm_hc71 
+if _rc == 0 {
+rename (hm_hc70 hm_hc71 ) (hc70 hc71 )
+}
+
+rename c_ant_sampleweight ant_sampleweight
+drop c_placeholder
 
 ***survey level data
     gen survey = "DHS-`name'"

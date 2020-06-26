@@ -32,7 +32,7 @@ order *,sequential
 	replace c_anc_ear_q = 0 if c_anc_ear == 0 & c_anc_any == 1
 	
 	*anc_skill: Categories as skilled: doctor, nurse, midwife, auxiliary nurse/midwife...
-	foreach var of varlist m2a-m2n {
+	foreach var of varlist m2a-m2m {
 	local lab: variable label `var' 
     replace `var' = . if ///
         !regexm("`lab'","trained") & ///
@@ -55,7 +55,7 @@ order *,sequential
 	
 	*c_anc_ski: antenatal care visit with skilled provider for pregnancy of births in last 2 years
 	gen c_anc_ski = .
-	replace c_anc_ski = 1 if anc_skill >= 1
+	replace c_anc_ski = 1 if anc_skill >= 1 & anc_skill!=.
 	replace c_anc_ski = 0 if anc_skill == 0
 	
 	*c_anc_ski_q: antenatal care visit with skilled provider among ANC users for pregnancy of births in last 2 years

@@ -57,7 +57,7 @@ order *,sequential  //make sure variables are in order.
 	
 	*c_sba: Skilled birth attendance of births in last 2 years: go to report to verify how "skilled is defined"
 	gen c_sba = . 
-	replace c_sba = 1 if sba_skill>=1 
+	replace c_sba = 1 if sba_skill>=1 & sba_skill!=. 
 	replace c_sba = 0 if sba_skill==0 
 	  
 	*c_sba_q: child placed on mother's bare skin and breastfeeding initiated immediately after birth among children with sba of births in last 2 years

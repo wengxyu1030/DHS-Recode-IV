@@ -66,6 +66,18 @@ order *,sequential
 	gen c_anc_bp = 0 if m2n != .    // For m42a to m42e based on women who had seen someone for antenatal care for their last born child
 	replace c_anc_bp = 1 if m42c==1
 	
+	*c_anc_bp: basing on the original structure, treat m2n==9 as m2n ==.
+	gen c_anc_bp = 0 if !inlist(m2n,9,.)   
+	replace c_anc_bp = 1 if m42c==1	
+	
+	*c_anc_bp: following Guide from DHS, based on women who had seen someone for antenatal care, i.e. m2n =0 
+	gen c_anc_bp = 0 if m2n==0    // For m42a to m42e based on women who had seen someone for antenatal care for their last born child
+	replace c_anc_bp = 1 if m42c==1 & m2n==0
+	
+   	*c_anc_bp: based on m42c, only change c_anc_bp from missing to 0 when m42c is missing & m2n==1 (pay no anc visit)
+   	g c_anc_bp = m42c if !inlist(m42c,8,9) // For m42a to m42e based on women who had seen someone for antenatal care for their last born child
+	replace c_anc_bp = 0 if m2n==1 & inlist(m42c,8,9,.)
+
 	*c_anc_bp_q: Blood pressure measured during pregnancy among ANC users of births in last 2 years
 	gen c_anc_bp_q = (c_anc_bp==1) if c_anc_any == 1 
 	replace c_anc_bp_q = . if mi(c_anc_bp) & c_anc_any == 1 

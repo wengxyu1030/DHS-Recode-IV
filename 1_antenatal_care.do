@@ -63,7 +63,7 @@ order *,sequential
 	replace c_anc_ski_q = . if mi(c_anc_ski) & c_anc_any == 1
 	
 	*c_anc_bp: Blood pressure measured during pregnancy of births in last 2 years
-	gen c_anc_bp = 0 if m2n != 1    // For m42a to m42e based on women who had seen someone for antenatal care for their last born child
+	gen c_anc_bp = 0 if m2n == 0    // For m42a to m42e based on women who had seen someone for antenatal care for their last born child
 	replace c_anc_bp = 1 if m42c==1
 
 	*c_anc_bp_q: Blood pressure measured during pregnancy among ANC users of births in last 2 years

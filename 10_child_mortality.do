@@ -24,7 +24,7 @@
 	replace time = 0 if time<0
 	
 *mor_afl				Child age at death imputation flag
-    clonevar mor_afl = b13
+    clonevar mor_afl = b13 
 	
 
 

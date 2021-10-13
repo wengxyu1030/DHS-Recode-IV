@@ -171,59 +171,59 @@ global DHScountries_Recode_V
 #delimit ;
 global DHScountries_Recode_IV
 "
- Egypt2000            
- Jordan2002           
- Chad2004             
  Armenia2000          
+ Armenia2005          
  Bangladesh2004       
  Benin2001            
  Bolivia2003          
- BurkinaFaso2003      
- Cambodia2000         
- Cameroon2004         
+ BurkinaFaso2003
+ Cambodia2000
+ Cameroon2004                 
+ Chad2004             
  Colombia2000         
- DominicanRepublic2002
+ Colombia2005         
  DominicanRepublic1999
+ DominicanRepublic2002
+ Egypt2000            
+ Egypt2005            
+           
  Ethiopia2000         
+ Ethiopia2005         
  Ghana2003            
+ Guinea2005           
  Haiti2000            
  Indonesia2002        
+ Jordan2002           
  Kenya2003            
  Lesotho2004          
  Madagascar2003       
- Malawi2004           
  Malawi2000           
+ Malawi2004           
  Mali2001             
+ Moldova2005          
  Morocco2003          
  Mozambique2003       
  Namibia2000          
  Nepal2001            
  Nicaragua2001        
+         
  Nigeria2003          
  Peru2000             
  Philippines2003      
  Rwanda2000           
+ Rwanda2005           
  Senegal2005          
- Tanzania2004         
  Tanzania1999         
+ Tanzania2004         
  Turkey2003           
+
  Uganda2000           
  Vietnam2002          
  Zambia2001           
  Zimbabwe1999         
- Armenia2005          
- Colombia2005         
- Egypt2005            
- Ethiopia2005         
- Guinea2005           
- Moldova2005          
- Rwanda2005           
- Eritrea2002          
- Nigeria1999          
- Turkmenistan2000
 ";
 #delimit cr
-
+// Turkmenistan2000   Nigeria1999  Eritrea2002
 **********************************
 *** DHS countries: Recode III ****
 **********************************

@@ -7,8 +7,13 @@
     clonevar hh_id = hhid
 	
 *hh_headed	Head's highest educational attainment (1 = none, 2 = primary, 3 = lower sec or higher)
-    recode hv106 (0 = 1) (1 = 2) (2/3 = 3) (8=.) if hv101 == 1,gen(hh_headed)
+	if inlist(name, "Malawi2000","Mali2001", "Uganda2000"){
+		replace hv101=98 if hvidx!=hv218 & hv101==1
+	} // for points that have hh with multiple hh head, judge hh head by hv218 and recode members hv101=98 if they are not hh head
 	
+    recode hv106 (0 = 1) (1 = 2) (2/3 = 3) (8 9=.) if hv101 == 1,gen(headed)
+	bysort hh_id: egen hh_headed = min(headed)
+		
 * hh_country_code Country code
 	clonevar hh_country_code = hv000 							  
 	
@@ -27,6 +32,10 @@
 *hh_sampleweight Sample weight (v005/1000000)       
     gen hh_sampleweight = hv005/10e6 
  
+	if inlist(name,"Nigeria1999"){
+		gen hv270=. 
+		gen hv271=.
+	}
 *hh_wealth_quintile	Wealth quintile       
     clonevar hh_wealth_quintile = hv270                          
 	
@@ -35,7 +44,6 @@
 	egen hhwealthscore_oldmin=min(hhwealthscore_old) 
 	gen hh_wealthscore=hhwealthscore_old-hhwealthscore_oldmin
 	replace hh_wealthscore=hh_wealthscore/10e6 
-	
 
 *hv001 Sampling cluster number (original)
 *hv002 Household number (original)

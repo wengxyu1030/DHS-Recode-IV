@@ -6,15 +6,32 @@
 /* Note: Don't use the cap but use gen and optional replace 
 (change later when encounter hiv data available ones)/optional on 
 the existance of the hiv data */
+// mali2001???
 
+if inlist(name,"BurkinaFaso2003","Cameroon2004","Ethiopia2005","Ghana2003","Guinea2005","Lesotho2004","Kenya2003","Malawi2004","Rwanda2005") {  
     ren hivclust hv001
     ren hivnumb hv002
     ren hivline hvidx
     ren hiv03 a_hiv_cat
+}
+
+
+if inlist(name,"Senegal2005") {
+    ren hivclust hv001
+	tostring hivstruct,replace
+	tostring hivnumb,gen(hivnb)
+	replace hivnb=" "+hivnb if hivnumb<10
+	gen hv002 = hivstruct+hivnb
+    ren hivline hvidx
+    ren hiv03 a_hiv_cat	
+	isid hv001 hv002 hvidx
+	order hv001 hv002
+}
+
 
     *a_hiv	15-49 household member (female or male) tested positive for HIV1 or HIV2 (1/0)
     gen a_hiv=.
-    replace a_hiv=1 if a_hiv_cat==1|a_hiv_cat==2|a_hiv_cat==3
+    replace a_hiv=1 if a_hiv_cat==1|a_hiv_cat==2|a_hiv_cat==3|a_hiv_cat==4
     replace a_hiv=0 if a_hiv_cat==0
 	
 	

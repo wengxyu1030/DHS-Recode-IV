@@ -4,6 +4,11 @@
 /* Note: More indicators are overlapped in non-Afganistan survey: 
 for example the hiv data in DHS and adult indicators in HEFPI,
 could be adjusted later */
+/*
+replace surveyid="DO1999DHS" if surveyid=="DR1999DHS"
+replace surveyid="CO2004DHS" if surveyid=="CO2005DHS"
+
+*/
 
 tempfile dhs hefpi
 
@@ -39,11 +44,19 @@ preserve
 
 	
 ***for variables generated from 7_child_vaccination
-	foreach var of var c_bcg c_dpt1 c_dpt2 c_dpt3 c_fullimm c_measles ///
-	c_polio1 c_polio2 c_polio3{
-    replace `var' = . if !inrange(hm_age_mon,12,23)
-    }
-
+	if !inlist(name,"Nicaragua2001","Peru2000"){
+		foreach var of var c_bcg c_dpt1 c_dpt2 c_dpt3 c_fullimm c_measles ///
+		c_polio1 c_polio2 c_polio3{
+		replace `var' = . if !inrange(hm_age_mon,12,23)
+		}
+	}
+	if inlist(name,"Nicaragua2001","Peru2000"){
+		foreach var of var c_bcg c_dpt1 c_dpt2 c_dpt3 c_fullimm c_measles ///
+		c_polio1 c_polio2 c_polio3{
+		replace `var' = . if !inrange(hm_age_mon,18,29)
+		}
+	}	
+	
 ***for variables generated from 8_child_illness	
 	foreach var of var c_ari2 c_diarrhea 	c_diarrhea_hmf	c_diarrhea_medfor	c_diarrhea_mof	c_diarrhea_pro	c_diarrheaact ///
 	c_diarrheaact_q	c_fever	c_fevertreat	c_illness	c_illtreat	c_sevdiarrhea	c_sevdiarrheatreat ///
@@ -52,7 +65,7 @@ preserve
     }
 	
 ***for vriables generated from 9_child_anthropometrics
-	foreach var of var c_underweight c_stunted	hc70 hc71 ant_sampleweight{
+	foreach var of var c_underweight c_stunted	hc70 hc71  ant_sampleweight{ 
     replace `var' = . if !inrange(hm_age_mon,0,59)
     }
 
@@ -86,15 +99,9 @@ egen value_my`var' = wtmean(`var'), weight(w_sampleweight)
 }  
 
 *indicators calculate using household sample weight
-foreach var of var c_ITN {    
+foreach var of var c_underweight c_stunted	c_ITN {
 egen value_my`var' = wtmean(`var'), weight(hh_sampleweight)
 }
-
-*indicators using ant_sampleweight
-foreach var of var c_underweight c_stunted{    
-egen value_my`var' = wtmean(`var'), weight(ant_sampleweight)
-}
-
 
 keep surveyid ispreferred value*
 keep if _n == 1
@@ -151,11 +158,19 @@ The bidx is nt used in the hefpi indicator caluclation
 	
 	
 ***for variables generated from 7_child_vaccination
-	foreach var of var c_bcg c_dpt1 c_dpt2 c_dpt3 c_fullimm c_measles ///
-	c_polio1 c_polio2 c_polio3{
-    replace `var' = . if !inrange(hm_age_mon,15,23)
-    }
-
+	if !inlist(name,"Nicaragua2001","Peru2000"){
+		foreach var of var c_bcg c_dpt1 c_dpt2 c_dpt3 c_fullimm c_measles ///
+		c_polio1 c_polio2 c_polio3{
+		replace `var' = . if !inrange(hm_age_mon,15,23)
+		}
+	}
+	if inlist(name,"Nicaragua2001","Peru2000"){
+		foreach var of var c_bcg c_dpt1 c_dpt2 c_dpt3 c_fullimm c_measles ///
+		c_polio1 c_polio2 c_polio3{
+		replace `var' = . if !inrange(hm_age_mon,18,29)
+		}
+	}	
+	
 ***for variables generated from 8_child_illness	
 	foreach var of var 	c_diarrhea 	c_diarrhea_hmf	c_diarrhea_medfor	c_diarrhea_mof	c_diarrhea_pro	c_diarrheaact ///
 	c_diarrheaact_q	c_fever	c_fevertreat	c_illness	c_illtreat	c_sevdiarrhea	c_sevdiarrheatreat ///
@@ -164,7 +179,7 @@ The bidx is nt used in the hefpi indicator caluclation
     }
 	
 ***for vriables generated from 9_child_anthropometrics
-	foreach var of var c_underweight c_stunted	hc70 hc71 ant_sampleweight{
+	foreach var of var c_underweight c_stunted	hc70 hc71 ant_sampleweight{ 
     replace `var' = . if !inrange(hm_age_mon,0,59)
     }
 
@@ -183,19 +198,14 @@ The bidx is nt used in the hefpi indicator caluclation
 *********************************
 *indicators calculate using w_samplewieght (women sample weight)
 foreach var of var w_CPR w_bmi_1549 w_condom_conc w_height_1549 w_mammogram w_obese_1549 ///
-w_overweight_1549 w_papsmear w_unmet_fp c_anc	c_fullimm c_measles c_sba  c_treatARI2	///
+w_overweight_1549 w_papsmear w_unmet_fp c_anc	c_fullimm c_measles c_sba c_stunted c_treatARI2	///
 c_treatdiarrhea	{
 egen value_my`var' = wtmean(`var'), weight(w_sampleweight)
 }   
 
 *indicator caculate at adult level (using individual sample weight）
-foreach var of var a_bp_dial a_bp_sys a_bp_treat a_diab_treat c_ITN {
+foreach var of var a_bp_dial a_bp_sys a_bp_treat a_diab_treat c_ITN c_underweight {
 egen value_my`var' = wtmean(`var'),weight(hh_sampleweight)
-}
-
-*indicator caculate for child_anthropometrics (using ant_sampleweight）
-foreach var of var c_underweight c_stunted {
-egen value_my`var' = wtmean(`var'),weight(ant_sampleweight)
 }
 
 

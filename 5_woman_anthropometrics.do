@@ -9,7 +9,7 @@ rename v213 wpregnant
 
 *w_bmi_1549	15-49y woman's BMI      
 	foreach var of varlist v437 v438 {
-	replace `var'=. if `var'==9999
+	replace `var'=. if `var'==9999 
 	}
 	replace v437=v437/10
 	replace v438=v438/1000

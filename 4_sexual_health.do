@@ -3,11 +3,16 @@
 *** Sexual health*******
 ************************ 	
 
-	gen w_married=(v501==1)
-	replace w_married=. if v501==.
+	gen w_married=(v502==1)
+	replace w_married=. if inlist(v502,.,9)
 	
 	*w_condom_conc: 18-49y woman who had more than one sexual partner in the last 12 months and used a condom during last intercourse
      ** Concurrent partnerships 
+	if inlist(name,"Tanzania1999"){
+		ren s523 v766b
+	}
+	cap gen v766b=.
+
 	replace v766b=. if v766b==98|v766b==99
 	gen wconc_partnerships=1 if v766b>1&v766b!=.
 	replace wconc_partnerships=0 if v766b==0|v766b==1
@@ -17,8 +22,8 @@
 		replace wcondom=. if wcondom==8|wcondom==9
 		replace wcondom=. if v766b==0 | v766b==.
 		
-	gen w_condom_conc=1 if wcondom==1&wconc_partnerships==1
-    replace w_condom_conc=0 if wcondom==0&wconc_partnerships==1
+	gen w_condom_conc=1 if wcondom==1 & wconc_partnerships==1
+    replace w_condom_conc=0 if wcondom==0 & wconc_partnerships==1
 	
     /*18-49y woman who had more than one sexual partner in the last 12 months and used a condom during last intercourse*/
     cap confirm variable w_condom_conc
@@ -27,9 +32,7 @@
     }
 
 	*w_CPR: Use of modern contraceptive methods of women age 15(!)-49 married or living in union
-	gen w_CPR=(v313==3)
-    replace w_CPR=. if v313==.
-    replace w_CPR=. if w_married!=1
+	gen w_CPR=(v313==3) if v313!=. & w_married==1
 	
 	*w_unmet_fp 15-49y married or in union with unmet need for family planning (1/0)
 	*w_need_fp 15-49y married or in union with need for family planning (1/0)
@@ -74,6 +77,13 @@
     *w_metany_fp_q 15-49y married or in union using modern contraceptives among those with need for family planning who use any contraceptives (1/0)
     gen w_metany_fp_q = (w_CPR == 1) if w_need_fp == 1 
 	 
+	* For Mali2001 & Senegal2005, the hv002 lost 2-3 digits, fix this issue in main.do, 1.do,4.do,12.do & 13.do
+	if inlist(name,"Mali2001","Senegal2005"){
+		drop v002
+		gen v002 = substr(caseid,8,5)
+		isid  v001 v002 v003
+		order caseid v000 v001 v002 v003
+	}	
 
 
 	

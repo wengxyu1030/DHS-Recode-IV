@@ -18,10 +18,12 @@ macro drop _all
 
 //NOTE FOR WINDOWS USERS : use "/" instead of "\" in your paths
 
-global root "/Users/xianzhang/Dropbox/DHS"
+* Define root depend on the stata user. 
+if "`c(username)'" == "xweng"     local pc = 1
+if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA"
 
 * Define path for data sources
-global SOURCE "/Volumes/alan/DHS/RAW DATA/Recode IV"
+global SOURCE "${root}/RAW DATA/Recode IV"
 
 * Define path for output data
 global OUT "${root}/STATA/DATA/SC/FINAL"
@@ -30,12 +32,26 @@ global OUT "${root}/STATA/DATA/SC/FINAL"
 global INTER "${root}/STATA/DATA/SC/INTER"
 
 * Define path for do-files
-global DO "${root}/STATA/DO/SC/DHS/Recode IV"
+if `pc' != 0 global DO "${root}/STATA/DO/SC/DHS/DHS-Recode-IV"
 
 * Define the country names (in globals) in by Recode
 do "${DO}/0_GLOBAL.do"
 
-foreach name in    Chad2004     {
+/*
+issue: 
+Egypt2005 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode IV/DHS-Egypt2005/DHS-Egypt2005hm.dta not Stata format
+Indonesia2002 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode IV/DHS-Indonesia2002/DHS-Indonesia2002birth.dta not Stata format
+Madagascar2003 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode IV/DHS-Madagascar2003/DHS-Madagascar2003ind.dta not Stata format
+Nepal2001birth file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode IV/DHS-Nepal2001/DHS-Nepal2001birth.dta not found
+Nicaragua2001 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode   IV/DHS-Nicaragua2001/DHS-Nicaragua2001birth.dta not found
+Philippines2003 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode    IV/DHS-Philippines2003/DHS-Philippines2003birth.dta not found
+Tanzania2004 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode  IV/DHS-Tanzania2004/DHS-Tanzania2004birth.dta not found
+Turkey2003 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode  IV/DHS-Turkey2003/DHS-Turkey2003birth.dta not found
+Vietnam2002 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode IV/DHS-Vietnam2002/DHS-Vietnam2002birth.dta not found
+*/
+
+foreach name in  $DHScountries_Recode_IV  {
+    
 tempfile birth ind men hm hiv hh zsc iso wi
 
 ************************************

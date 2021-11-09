@@ -74,6 +74,7 @@ Vietnam2002 file C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA/RAW DATA/Recode 
 */
 
 foreach name in  $DHScountries_Recode_IV  {
+
     
 tempfile birth ind men hm hiv hh zsc iso wi
 

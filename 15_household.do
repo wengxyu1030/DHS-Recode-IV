@@ -36,11 +36,24 @@
 		gen hv270=. 
 		gen hv271=.
 	}
-*hh_wealth_quintile	Wealth quintile       
+*hh_wealth_quintile	Wealth quintile    
+	capture confirm variable hv270
+	if _rc == 0 {
     clonevar hh_wealth_quintile = hv270                          
+	}
+	if _rc != 0 {
+	gen hh_wealth_quintile = . 
+	}
 	
 *hh_wealthscore	Wealth index score   
-	clonevar hhwealthscore_old = hv271
+	capture confirm variable hv271
+	if _rc == 0 {
+    clonevar hhwealthscore_old = hv271                          
+	}
+	if _rc != 0 {
+	gen hhwealthscore_old = . 
+	}
+	
 	egen hhwealthscore_oldmin=min(hhwealthscore_old) 
 	gen hh_wealthscore=hhwealthscore_old-hhwealthscore_oldmin
 	replace hh_wealthscore=hh_wealthscore/10e6 

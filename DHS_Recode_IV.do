@@ -91,8 +91,7 @@ if _rc == 0 {
     	gen ant_sampleweight = v005/10e6  
     	drop if _!=3
 		
-		
-		gen c_motherln = hv112
+		clonevar c_motherln = v003 /*DW Nov 2021 - use v003 from birth.dta in the zsc dependent code chunk*/
 		
   		foreach var in hc70 hc71 hc72 {
   	 	replace `var'=. if `var'>900
@@ -128,7 +127,7 @@ if _rc == 0 {
 		label values c_stu_was_sev l_stu_was_sev
 		
 		rename ant_sampleweight c_ant_sampleweight
-		keep c_* caseid bidx hwlevel hc70 hc71
+		keep c_* caseid bidx hwlevel hc70 hc71 hc72
 		save "${INTER}/zsc_birth.dta",replace
     }
 

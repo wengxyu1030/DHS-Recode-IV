@@ -42,7 +42,7 @@ if `pc' != 0 global DO "${root}/STATA/DO/SC/DHS/DHS-Recode-IV"
 
 * Define the country names (in globals) in by Recode
 do "${DO}/0_GLOBAL.do"
-global DHScountries_Recode_IV "Armenia2005 "
+global DHScountries_Recode_IV "Colombia2000"
 
 /*
 issue: 
@@ -242,6 +242,10 @@ if miss_b16 == 1 {
 rename (v001 v002 v003) (hv001 hv002 hvidx) //v003 in birth.dta: mother's line number
 }
 
+	* FEB 2022 DW
+	gen w_married=(v502==1)
+	replace w_married=. if inlist(v502,.,9)
+	
 keep hv001 hv002 hvidx bidx c_* mor_* w_* hm_* 
 save `birth'
 

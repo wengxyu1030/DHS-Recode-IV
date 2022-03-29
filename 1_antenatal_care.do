@@ -278,6 +278,41 @@ order *,sequential
 		recode c_anc_bp c_anc_bp_q c_anc_bs c_anc_bs_q  c_anc_ur c_anc_ur_q c_anc_eff* (0=.) // missing m42c, m42d, m42e, recode related variable to missing 
 	}
 	
+	*c_anc_hosp : Received antenatal care in the hospital
+	gen c_anc_hosp = .
+			* Use m57 vars in birth.dta to identify hospital antenatal care
+	replace c_anc_hosp = 0 if !mi(m15)  /// using m15 place-of-delivery is not the best way out
+
+	*c_anc_public : Received antenatal care in public facilities	 
+	gen c_anc_public = .
+	replace c_anc_public = 0 if !mi(m15)
+	
+
+	capture confirm variable m57a
+	if !_rc {
+		foreach var of varlist m57a-m57x {
+			capture confirm variable `var'
+			if !_rc {				
+				capture decode `var', gen(lower_`var')
+				if !_rc {
+					replace lower_`var' = lower(lower_`var')
+					local lab: variable label lower_`var' 
+					
+					replace c_anc_hosp = 1 if (regexm("`lab'","medical college|surgical") | (regexm("`lab'","hospital") | regexm("`lab'","hosp")) & !regexm("`lab'","sub-center")) & `var'==1	
+				
+					*replace c_anc_public = 1 if ((regexm("`lab'","public") | regexm("`lab'","gov") | regexm("`lab'","nation") |regexm("`lab'","govt")|regexm("`lab'","government")) & !regexm("`lab'","private")) & `var'==1			
+				}			
+			}
+		}	
+	}
+	
+	foreach var of varlist m57e-m57l {
+		capture confirm variable `var'
+		if !_rc {
+			replace c_anc_public = 1 if `var'==1	
+		}
+	}
+
 	*w_sampleweight.
 	gen w_sampleweight = v005/10e6
 	

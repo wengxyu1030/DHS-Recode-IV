@@ -27,6 +27,7 @@ if `pc' == 1 global root "C:/Users/XWeng/OneDrive - WBG/MEASURE UHC DATA"
 
 * Define path for data sources
 global SOURCE "${root}/RAW DATA/Recode IV"
+	if `pc' == 4 global SOURCE "/Volumes/Seagate Portable Drive 1/HEFPI DATA/RAW DATA/DHS/DHS IV"
 
 * Define path for output data
 global OUT "${root}/STATA/DATA/SC/FINAL"
@@ -42,7 +43,30 @@ if `pc' != 0 global DO "${root}/STATA/DO/SC/DHS/DHS-Recode-IV"
 
 * Define the country names (in globals) in by Recode
 do "${DO}/0_GLOBAL.do"
-global DHScountries_Recode_IV "Colombia2000"
+global DHScountries_Recode_IV "Egypt2000 Jordan2002 Chad2004 Armenia2000 Bangladesh2004 Benin2001 Bolivia2003 BurkinaFaso2003 Cambodia2000 Cameroon2004 Colombia2000 DominicanRepublic2002 DominicanRepublic1999 Ethiopia2000 Ghana2003 Haiti2000 Indonesia2002 Kenya2003 Lesotho2004 Madagascar2003 Malawi2004 Malawi2000 Mali2001 Morocco2003 Mozambique2003 Namibia2000 Nepal2001 Nicaragua2001 Nigeria2003 Peru2000 Philippines2003 Rwanda2000 Senegal2005 Tanzania2004 Tanzania1999 Turkey2003 Uganda2000 Vietnam2002 Zambia2001 Zimbabwe1999 Armenia2005 Colombia2005 Egypt2005 Ethiopia2005 Guinea2005 Moldova2005 Rwanda2005"
+
+
+foreach name in  $DHScountries_Recode_IV  {
+    use "${SOURCE}/DHS-`name'/DHS-`name'birth.dta", clear
+	capture confirm variable m57a
+	if !_rc {
+		di " [`name'] has it!"
+
+		if "$placeholder" == "" {
+			global placeholder "`name'"
+		}
+		else {
+			global placeholder "$placeholder `name'"
+		}
+	}
+}
+	pause on 
+	di "............."
+	global DHScountries_Recode_IV "$placeholder"
+	di "$DHScountries_Recode_IV"
+	pause review
+	
+
 
 /*
 issue: 
@@ -465,7 +489,8 @@ restore
 	c_anc_eff3	c_anc_eff3_q	c_anc_ir	c_anc_ir_q	c_anc_ski	c_anc_ski_q ///
 	c_anc_tet	c_anc_tet_q	c_anc_ur	c_anc_ur_q	c_caesarean	c_earlybreast ///
 	c_facdel	c_hospdel	c_sba	c_sba_eff1	c_sba_eff1_q	c_sba_eff2 ///
-	c_sba_eff2_q	c_sba_q	c_skin2skin	c_pnc_any	c_pnc_eff	c_pnc_eff_q c_pnc_eff2	c_pnc_eff2_q {
+	c_sba_eff2_q	c_sba_q	c_skin2skin	c_pnc_any	c_pnc_eff	c_pnc_eff_q c_pnc_eff2 ///
+	c_pnc_eff2_q c_anc_public c_anc_hosp {
     replace `var' = . if !(inrange(hm_age_mon,0,23)& bidx ==1)
     }
 	
@@ -476,7 +501,7 @@ restore
     }
 	
 	***for variables generated from 8_child_illness	
-	foreach var of var c_ari	c_diarrhea 	c_diarrhea_hmf	c_diarrhea_medfor	c_diarrhea_mof	c_diarrhea_pro	c_diarrheaact ///
+	foreach var of var c_ari c_diarrhea  c_diarrhea_hmf	c_diarrhea_medfor	c_diarrhea_mof	c_diarrhea_pro	c_diarrheaact ///
 	c_diarrheaact_q	c_fever	c_fevertreat	c_illness	c_illtreat	c_sevdiarrhea	c_sevdiarrheatreat ///
 	c_sevdiarrheatreat_q	c_treatARI c_treatARI2	c_treatdiarrhea	c_diarrhea_med {
     replace `var' = . if !inrange(hm_age_mon,0,59)

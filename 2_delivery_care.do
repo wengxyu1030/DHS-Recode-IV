@@ -44,6 +44,10 @@ order *,sequential  //make sure variables are in order.
 	replace c_hospdel = . if mi(m15) | m15 == 99 | m15 == 98 | mi(m15_lab)	
     // please check this indicator in case it's country specific	
 	// Jordan2002: m15=24 (royal medical services)
+	if inlist(name,"Armenia2000") {
+		replace c_hospdel = (inlist(m15,21,22)) if !missing(m15)
+	}	
+	
 	*c_facdel: child born in formal health facility of births in last 2 years
 	gen c_facdel = 0 if !mi(m15)
 	replace c_facdel = 1 if regexm(m15_lab,"hospital") | ///
@@ -52,7 +56,6 @@ order *,sequential  //make sure variables are in order.
 
 	*c_earlybreast: child breastfed within 1 hours of birth of births in last 2 years
 	gen c_earlybreast = 0
-	
 	replace c_earlybreast = 1 if inlist(m34,0,100)
 	replace c_earlybreast = . if inlist(m34,999,199)
 	replace c_earlybreast = . if m34 ==. & m4 != 94 // case where m34 is missing that is not due to "no breastfeed"

@@ -31,14 +31,25 @@ order *,sequential
 	g c_anc_ear_q = c_anc_ear if c_anc_any == 1 
 	
 	*anc_skill: Categories as skilled: doctor, nurse, midwife, auxiliary nurse/midwife...
-	foreach var of varlist m2a-m2m {
-	local lab: variable label `var' 
-    replace `var' = . if ///
-        !regexm("`lab'","trained") & ///
-	(!regexm("`lab'","doctor|nurse|midwife|aide soignante|ma/sacmo|matronne|cs health profession|assistante accoucheuse|clinical officer|health assitant|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant") ///
-	|regexm("`lab'","na^|-na|- na|traditional birth attendant|family welfare visitor|health assistant|obstetrician|trad.birth attendant|untrained|unqualified|empirical midwife") )
-	replace `var' = . if !inlist(`var',0,1)
-	 }
+	 if !inlist(name,"DominicanRepublic2002") {
+		foreach var of varlist m2a-m2m {
+		local lab: variable label `var' 
+		replace `var' = . if ///
+			!regexm("`lab'","trained") & ///
+		(!regexm("`lab'","doctor|nurse|midwife|aide soignante|ma/sacmo|matronne|cs health profession|assistante accoucheuse|clinical officer|health assitant|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant") ///
+		|regexm("`lab'","na^|-na|- na|traditional birth attendant|family welfare visitor|health assistant|obstetrician|trad.birth attendant|untrained|unqualified|empirical midwife") )
+
+		replace `var' = . if !inlist(`var',0,1)
+		 }
+	}
+	 
+	 * Take care of peculiar issues discovered by DW team in Apr 2022: Gynecologist/Obstetrician
+	 if inlist(name,"DominicanRepublic2002") {
+		foreach var of varlist m2a-m2m{
+			replace `var' = . if inlist("`var'","m2g","m2k","m2c")
+			replace `var' = . if !inlist(`var',0,1)
+		 }
+	 }	 
 	 
    if inlist(name,"Bangladesh2004") {
 		replace m2i = .
@@ -305,10 +316,10 @@ order *,sequential
 			}
 		}	
 	}
-	
-	foreach var of varlist m57e-m57l {
-		capture confirm variable `var'
-		if !_rc {
+
+	capture confirm variable m57e
+	if !_rc {
+		foreach var of varlist m57e-m57l {
 			replace c_anc_public = 1 if `var'==1	
 		}
 	}

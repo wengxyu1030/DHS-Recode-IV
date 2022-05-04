@@ -47,6 +47,9 @@ order *,sequential  //make sure variables are in order.
 	if inlist(name,"Armenia2000") {
 		replace c_hospdel = (inlist(m15,21,22)) if !missing(m15)
 	}	
+	if inlist(name,"Vietnam2002") {
+		replace c_hospdel = (inlist(m15,21,22,23)) if !missing(m15)
+	}	
 	
 	*c_facdel: child born in formal health facility of births in last 2 years
 	gen c_facdel = 0 if !mi(m15)

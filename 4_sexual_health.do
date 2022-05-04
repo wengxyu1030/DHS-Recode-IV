@@ -52,6 +52,7 @@
 	 
 	 preserve
 	 do "${DO}/Add unmetFPmod_DHS.do"
+	 
      gen w_metmod_fp = 1 if inlist(unmet,3,4)
      replace w_metmod_fp = 0 if inlist(unmet,1,2)
 	 

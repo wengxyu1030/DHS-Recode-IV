@@ -316,12 +316,18 @@ order *,sequential
 			}
 		}	
 	}
+	else {
+		replace c_anc_hosp = .
+	}
 
 	capture confirm variable m57e
 	if !_rc {
 		foreach var of varlist m57e-m57l {
 			replace c_anc_public = 1 if `var'==1	
 		}
+	}
+	else {
+		replace c_anc_public = .
 	}
 
 	*w_sampleweight.

@@ -330,6 +330,12 @@ order *,sequential
 		replace c_anc_public = .
 	}
 
+	* raw variables exist, but na
+	if inlist(name,"Chad2004","Bangladesh2004","Bolivia2003","Cameroon2004","Madagascar2003","Morocco2003","Senegal2005","Guinea2005","Rwanda2005") {
+		replace c_anc_public = .
+		replace c_anc_hosp = .
+	}	
+	
 	*w_sampleweight.
 	gen w_sampleweight = v005/10e6
 	
